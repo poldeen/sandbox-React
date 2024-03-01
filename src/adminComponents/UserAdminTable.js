@@ -1,7 +1,7 @@
 import ActionButton from 'components/common/ActionButton';
 import PageHeader from 'components/common/PageHeader';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Card, Col, Form, Modal, Row } from 'react-bootstrap';
+import { Button, Card, Col, Form, Modal, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTable } from 'react-table';
 import ProfileService from 'services/profile.service';
@@ -64,6 +64,7 @@ const UserAdminTable = props => {
   };
 
   const findByFirstName = () => {
+    event.preventDefault();
     ProfileService.getProfilesByFirstName(searchFirstName)
       .then(response => {
         if (response) {
@@ -144,61 +145,62 @@ const UserAdminTable = props => {
       <PageHeader title="User Admin" className="mb-3"></PageHeader>
       <Card>
         <Card.Body>
-          <div className="list row">
-            <div className="col-md-8">
-              <div className="input-group mb-3">
-                <input
+          <Row>
+            <Form onSubmit={findByFirstName}>
+              <Col>
+                <Form.Control
                   type="text"
                   className="form-control"
-                  placeholder="Search by title"
+                  placeholder="Search by first name"
                   value={searchFirstName}
                   onChange={onUserSearch}
                 />
-                <div className="input-group-append">
-                  <button
-                    className="btn btn-outline-secondary"
-                    type="button"
-                    onClick={findByFirstName}
-                  >
-                    Search
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-12 list">
-              <table
-                className="table table-striped table-bordered"
-                {...getTableProps()}
-              >
-                <thead>
-                  {headerGroups.map(headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps()}>
-                          {column.render('Header')}
-                        </th>
-                      ))}
+              </Col>
+              <Col>
+                <Button
+                  variant='primary'
+                  className='me-2 mb-1'
+                  type="submit"
+                //onClick={findByFirstName}
+                >
+                  Search
+                </Button>
+              </Col>
+            </Form>
+          </Row>
+          <div className="col-md-12 list">
+            <table
+              className="table table-striped table-bordered"
+              {...getTableProps()}
+            >
+              <thead>
+                {headerGroups.map(headerGroup => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <th {...column.getHeaderProps()}>
+                        {column.render('Header')}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {rows.map((row, i) => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map(cell => {
+                        return (
+                          <td {...cell.getCellProps()}>
+                            {cell.render('Cell')}
+                          </td>
+                        );
+                      })}
                     </tr>
-                  ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                  {rows.map((row, i) => {
-                    prepareRow(row);
-                    return (
-                      <tr {...row.getRowProps()}>
-                        {row.cells.map(cell => {
-                          return (
-                            <td {...cell.getCellProps()}>
-                              {cell.render('Cell')}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </Card.Body>
       </Card>
@@ -254,13 +256,16 @@ const UserAdminTable = props => {
             </Col>
           </Row>
 
-          <button
+          <Button
             type="submit"
-            className="badge badge-success"
+            //className="badge badge-success"
             onClick={updateUser}
+
+            variant='primary'
+            className='me-2 mb-1'
           >
             Update
-          </button>
+          </Button>
         </Modal.Body>
       </Modal>
     </>
